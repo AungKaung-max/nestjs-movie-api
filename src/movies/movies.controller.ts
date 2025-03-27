@@ -45,11 +45,4 @@ export class MoviesController {
 
     return this.movieService.create(createVideoDto);
   }
-
-  // @Post()
-  // @UseInterceptors(FileInterceptor('video'))
-  // uploadFile(@UploadedFile() file: Express.Multer.File) {
-  //   console.log(file);
-
-  // }
 }
