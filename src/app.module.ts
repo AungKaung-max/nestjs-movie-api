@@ -15,7 +15,7 @@ import { join } from 'path';
       serveRoot: '/upload',
     }),
     ConfigModule.forRoot({
-      envFilePath: ['.env.development', '.env.production'],
+      envFilePath: ['.env.development.local', '.env.production.local'],
     }),
     MulterModule.register({
       dest: './upload',
