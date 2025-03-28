@@ -30,7 +30,7 @@ import { CreateVideoLinkDto } from './dto/movie_link.dto';
 import { Movie } from './entities/movie.entity';
 import { MoviesService } from './movies.service';
 import { PaginationDTO } from './dto/pagination.dto';
-import { UpdateVideoDto } from './dto/UpdateVideo.dto';
+import { UpdateVideoDto } from './dto/updateVideo.dto';
 
 @Controller('movies')
 export class MoviesController {

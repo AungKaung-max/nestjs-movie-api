@@ -6,7 +6,7 @@ import { PaginationDTO } from './dto/pagination.dto';
 import { Movie } from './entities/movie.entity';
 import { MovieLink } from './entities/movie_link.entity';
 import { Like } from 'typeorm';
-import { UpdateVideoDto } from './dto/UpdateVideo.dto';
+import { UpdateVideoDto } from './dto/updateVideo.dto';
 
 @Injectable()
 export class MoviesService {
