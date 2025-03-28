@@ -6,6 +6,7 @@ import { PaginationDTO } from './dto/pagination.dto';
 import { Movie } from './entities/movie.entity';
 import { MovieLink } from './entities/movie_link.entity';
 import { Like } from 'typeorm';
+import { UpdateVideoDto } from './dto/UpdateVideo.dto';
 
 @Injectable()
 export class MoviesService {
@@ -62,5 +63,50 @@ export class MoviesService {
       skip,
       take: limit,
     });
+  }
+
+  async getMovieById(id: number) {
+    const movie = await this.movieRepository.findOne({
+      where: { id },
+      relations: ['movie_link'],
+    });
+    if (!movie) {
+      throw new BadRequestException('Invalid movie Id');
+    }
+    return movie;
+  }
+
+  async findByMovieAndUpdate(
+    id: number,
+    updateDto: UpdateVideoDto,
+    videoPath: string,
+  ) {
+    const movie = await this.movieRepository.findOne({
+      where: { id },
+      relations: ['movie_link'],
+    });
+
+    if (!movie) {
+      throw new BadRequestException('Invalid movie ID');
+    }
+
+    movie.title = updateDto.title || movie.title;
+    movie.description = updateDto.description || movie.description;
+
+    if (videoPath) {
+      movie.video = videoPath;
+    }
+
+    const updatedMovie = await this.movieRepository.save(movie);
+
+    return updatedMovie;
+  }
+
+  async deleteMovie(id: number) {
+    const movie = await this.movieRepository.findOne({ where: { id } });
+    if (!movie) {
+      throw new BadRequestException('Invalid movie ID');
+    }
+    return await this.movieRepository.delete(id);
   }
 }

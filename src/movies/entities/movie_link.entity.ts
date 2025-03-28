@@ -6,7 +6,7 @@ export class MovieLink {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Movie, (movie) => movie.id)
+  @ManyToOne(() => Movie, (movie) => movie.id, { onDelete: 'CASCADE' })
   movie: Movie;
 
   @Column()

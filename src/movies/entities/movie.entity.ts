@@ -28,6 +28,8 @@ export class Movie {
   })
   updated_at: Date;
 
-  @OneToMany(() => MovieLink, (movieLink) => movieLink.movie)
+  @OneToMany(() => MovieLink, (movieLink) => movieLink.movie, {
+    cascade: ['remove'],
+  })
   movie_link: MovieLink[];
 }
