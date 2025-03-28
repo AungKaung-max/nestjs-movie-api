@@ -17,8 +17,8 @@ export const databaseProviders = [
         console.log('Database connection successful!');
         return dataSource;
       } catch (error) {
-        console.error('Database connection failed:', error.message);
-        throw new Error('Database connection failed: ' + error.message);
+        console.error('Database connection failed:', error);
+        throw new Error('Database connection failed: ' + error);
       }
     },
   },

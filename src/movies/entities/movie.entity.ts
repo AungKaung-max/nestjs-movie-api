@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { MovieLink } from './movie_link.entity';
 
 @Entity('movie')
 export class Movie {
@@ -26,4 +27,7 @@ export class Movie {
     onUpdate: 'CURRENT_TIMESTAMP',
   })
   updated_at: Date;
+
+  @OneToMany(() => MovieLink, (movieLink) => movieLink.movie)
+  movie_link: MovieLink[];
 }

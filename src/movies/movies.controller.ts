@@ -1,21 +1,29 @@
 import {
+  BadRequestException,
+  Body,
   Controller,
-  UseInterceptors,
-  UploadedFile,
   HttpStatus,
+  Param,
+  ParseIntPipe,
+  Post,
+  Res,
+  UploadedFile,
+  UseInterceptors,
+  Get,
+  Query,
 } from '@nestjs/common';
-import { MoviesService } from './movies.service';
-import { CreateVideoDto } from './dto/movie.dto';
-import { Movie } from './entities/movie.entity';
-import { Post, Body, ParseFilePipeBuilder } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FileValidationPipe } from '../utils/multer.config';
-import { Express } from 'express';
-import { diskStorage } from 'multer';
-import { v4 as uuidv4 } from 'uuid';
-import * as path from 'path';
-import * as fs from 'fs';
+import { Response } from 'express';
 import * as moment from 'moment';
+import { diskStorage } from 'multer';
+import * as path from 'path';
+import { v4 as uuidv4 } from 'uuid';
+import { FileValidationPipe } from '../utils/multer.config';
+import { CreateVideoDto } from './dto/movie.dto';
+import { CreateVideoLinkDto } from './dto/movie_link.dto';
+import { Movie } from './entities/movie.entity';
+import { MoviesService } from './movies.service';
+import { PaginationDTO } from './dto/pagination.dto';
 
 @Controller('movies')
 export class MoviesController {
@@ -35,14 +43,52 @@ export class MoviesController {
           }
         },
       }),
+      fileFilter: (req, file, callback) => {
+        if (file.mimetype.match(/\/(mp4)$/)) {
+          callback(null, true);
+        } else {
+          return callback(
+            new BadRequestException('Only MP4 files are allowed!'),
+            false,
+          );
+        }
+      },
     }),
   )
-  create(
+  createMovie(
     @UploadedFile(FileValidationPipe) file: Express.Multer.File,
     @Body() createVideoDto: CreateVideoDto,
   ): Promise<Movie> {
-    createVideoDto.video = file.filename;
+    return this.movieService.createMovie(createVideoDto, file.filename);
+  }
 
-    return this.movieService.create(createVideoDto);
+  @Post('/:movieId/links')
+  async addMovieLinks(
+    @Param('movieId', ParseIntPipe) movieId: number,
+    @Body() createMovieLinkDtos: CreateVideoLinkDto[],
+    @Res() res: Response,
+  ) {
+    const movieLinks = await this.movieService.addMovieLink(
+      movieId,
+      createMovieLinkDtos,
+    );
+
+    const response = {
+      success: true,
+      data: movieLinks.map((data) => ({
+        id: data.id,
+        title: data.title,
+        link: data.link,
+        created_at: data.created_at,
+        updated_at: data.updated_at,
+      })),
+    };
+    return res.status(HttpStatus.CREATED).json(response);
+  }
+
+  @Get()
+  async getMovies(@Query() paginationDTO: PaginationDTO, @Res() res: Response) {
+    const movies = await this.movieService.getAllMovies(paginationDTO);
+    return res.status(HttpStatus.OK).json(movies);
   }
 }
