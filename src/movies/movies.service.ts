@@ -50,7 +50,10 @@ export class MoviesService {
   }
 
   async getAllMovies(paginationDto: PaginationDTO) {
-    const { skip, limit, title, description } = paginationDto;
+    let { skip, limit, title, description } = paginationDto;
+    skip = skip && skip > 0 ? skip : 0; 
+    limit = limit && limit > 0 ? limit : 10; 
+
     const condition: { title?: any; description?: any } = {};
     if (title) {
       condition.title = Like(`%${title}%`);

@@ -51,7 +51,12 @@ export class MoviesController {
   }
 
   @Put(':movieId')
-  @UseInterceptors(FileInterceptor('video', { storage: videoStorage, fileFilter: videoFileFilter }))
+  @UseInterceptors(
+    FileInterceptor('video', {
+      storage: videoStorage,
+      fileFilter: videoFileFilter,
+    }),
+  )
   async updateMovie(
     @Param('movieId', ParseIntPipe) movieId: number,
     @Body() updateDto: UpdateVideoDto,
@@ -59,13 +64,16 @@ export class MoviesController {
     @Res() res: Response,
   ) {
     let filePath: string = '';
-    if(file) {
+    if (file) {
       filePath = file.filename;
     }
-    const movie = await this.movieService.findByMovieAndUpdate(movieId, updateDto, filePath);
-    return res.status(200).json(movie);  
+    const movie = await this.movieService.findByMovieAndUpdate(
+      movieId,
+      updateDto,
+      filePath,
+    );
+    return res.status(200).json(movie);
   }
-
 
   @Post('/:movieId/links')
   async addMovieLinks(
